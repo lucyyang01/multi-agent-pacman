@@ -236,64 +236,7 @@ def minimax(self, gamestate, depth, indexOfPlayer, bestAction):
                 bestAction = action
             minimumEval = min(minimumEval, evaluation)
         return (minimumEval, bestAction)
-    
-
-
-
-
-
-
-# pacmanLegalActions = gameState.getLegalActions(0)
-        # newPos = successorGameState.getPacmanPosition()
-        # newFood = successorGameState.getFood()
-        # newGhostStates = successorGameState.getGhostStates()
-        # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-        # numGhosts = gameState.getNumAgents() - 1
-        # #each ghost has its own list of legal actions
-        # #each ghost has its own list of successor states
-        # ghost_actions_dict = {}
-        # for i in range(1, numGhosts + 1):
-        #     ghost_actions_dict[i] = gameState.getLegalActions(i)
-        # ghost_successors = {}
-        # for i in range(1, numGhosts + 1):
-        #     actions = ghost_actions_dict[i]
-        #     for action in actions:
-        #         ghost_successors[i] = gameState.generateSuccessor(i, action)
-            #ghostLegalActions = gameState.getLegalActions(i)
-
-
-    # def value(self, gamestate: GameState, agentID, depth, bestAction):
-    #     #figure out if we call max or min
-    #     if depth == 0 or gamestate.isWin() or gamestate.isLose():
-    #         return scoreEvaluationFunction(gamestate)
-    #     if agentID == 0:
-    #         return self.max_value(gamestate)
-    #     else:
-    #         return self.min_value(gamestate, agentID)
-        
-
-        
-    # def min_value(self,gamestate: GameState, agentID):
-    #     minEval = 1000
-    #     bestAction = None
-    #     for action in gamestate.getLegalActions(agentID):
-    #         successorState = gamestate.generateSuccessor(agentID, action)
-    #         succVal = self.value(successorState, (agentID +1) % gamestate.getNumAgents())[0]
-    #         if succVal < minEval:
-    #             bestAction = action
-    #         minEval = min(minEval, self.value(successorState))
-    #     return minEval, 
-
-    # #for a max level, return max score
-    # def max_value(self,gamestate: GameState):
-    #     maximumEval = -1000
-    #     bestAction = None
-    #     for action in gamestate.getLegalActions(0):
-    #         successorState = gamestate.generateSuccessor(0, action)
-    #         maximumEval = max(maximumEval, self.value((0 +1) % gamestate.getNumAgents()))
-    #     return maximumEval
                 
-
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
