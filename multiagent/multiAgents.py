@@ -83,7 +83,7 @@ class ReflexAgent(Agent):
         score = 0
         foodCoefficient = 1
         scaredGhostCoefficient = 3
-        normalGhostCoefficient = -4
+        normalGhostCoefficient = -3.2
         for newGhost in newGhostStates:
             ghostPosition = newGhost.getPosition()
             distanceToGhost = util.manhattanDistance(ghostPosition, newPos)
@@ -95,8 +95,8 @@ class ReflexAgent(Agent):
                 else:
                     score += scaredGhostCoefficient/distanceToGhost
             else:
-                if distanceToGhost == 1 :
-                    score += normalGhostCoefficient
+                if distanceToGhost == 1 or distanceToGhost == 0:
+                    score -= 1000
                 else:
                     score += normalGhostCoefficient/distanceToGhost
             
@@ -108,7 +108,6 @@ class ReflexAgent(Agent):
             
             if distanceToFood == 1:
                 score += 0.7
-                print("here! score:", score)
             else:
                 #print("distance:", distanceToFood)
                 score += foodCoefficient/distanceToFood
@@ -116,8 +115,34 @@ class ReflexAgent(Agent):
         #TODO: give a big boost if the num food is decreased after a move
         currentFood = currentGameState.getFood()
         if(len(currentFood.asList()) > len(newFood.asList())):
-            score += 2
-        return score 
+            score += 2 
+            #1/len  of newfood
+            #
+        if((len(newGhostStates) > 0)): 
+            if(len(newFood.asList()) > 1):
+                chaseFoodCoefficient = 4/(len(newFood.asList()) ** 2)
+            else:
+                #we are at the last food
+                if len(newFood.asList()) == 0:
+                    return 100000
+                
+                lastFoodItem = newFood.asList()[0]
+                #print(lastFoodItem)
+                ghostPosition = [ghosts.getPosition() for ghosts in newGhostStates]
+                currMin = 1000
+                minPosition = (1000, 1000)
+                for position in ghostPosition:
+                    if currMin > util.manhattanDistance(position, lastFoodItem):
+                        minPosition = position
+                    currMin = min(currMin, util.manhattanDistance(position, lastFoodItem))
+                    
+                if(util.manhattanDistance(lastFoodItem, currentGameState.getPacmanPosition()) < util.manhattanDistance(minPosition, lastFoodItem)):
+                    chaseFoodCoefficient = 0
+                else:
+                    chaseFoodCoefficient = float('inf')
+        else:
+            chaseFoodCoefficient = 0
+        return score + chaseFoodCoefficient
         
 
 def scoreEvaluationFunction(currentGameState: GameState):
@@ -178,8 +203,81 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
+        # pacmanLegalActions = gameState.getLegalActions(0)
+        # newPos = successorGameState.getPacmanPosition()
+        # newFood = successorGameState.getFood()
+        # newGhostStates = successorGameState.getGhostStates()
+        # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        # numGhosts = gameState.getNumAgents() - 1
+        # #each ghost has its own list of legal actions
+        # #each ghost has its own list of successor states
+        # ghost_actions_dict = {}
+        # for i in range(1, numGhosts + 1):
+        #     ghost_actions_dict[i] = gameState.getLegalActions(i)
+        # ghost_successors = {}
+        # for i in range(1, numGhosts + 1):
+        #     actions = ghost_actions_dict[i]
+        #     for action in actions:
+        #         ghost_successors[i] = gameState.generateSuccessor(i, action)
+            #ghostLegalActions = gameState.getLegalActions(i)
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        
+        return 
+        
+
+    def minimax(self, gamestate, depth, indexOfPlayer, bestAction):
+        if depth == 0 or gamestate.isWin() or gamestate.isLose():
+            return scoreEvaluationFunction(gamestate)
+        if indexOfPlayer == 0:
+            maximumEval = -1000
+            for action in gamestate.getLegalActions(indexOfPlayer):
+                successorState = gamestate.generateSuccessor(indexOfPlayer, action)
+                evaluation = self.minimax(successorState, depth - 1, (indexOfPlayer +1) % gamestate.getNumAgents())
+                if maximumEval < evaluation:
+                    bestAction = action
+                maximumEval = max(maximumEval, evaluation)
+                
+            return (maximumEval, bestAction)
+        else:
+            minimumEval = 1000
+            for action in gamestate.getLegalActions(indexOfPlayer):
+                successorState = gamestate.generateSuccessor(indexOfPlayer, action)
+                bestAction = None
+                evaluation = self.minimax(successorState, depth - 1, (indexOfPlayer +1) % gamestate.getNumAgents())
+                if minimumEval < evaluation:
+                    bestAction = action
+                minimumEval = min(minimumEval, evaluation)
+            return (maximumEval, bestAction)
+    
+    def value(self, gamestate: GameState, agentID, depth):
+        #figure out if we call max or min
+        if depth == 0 or gamestate.isWin() or gamestate.isLose():
+            return scoreEvaluationFunction(gamestate)
+        if agentID == 0:
+            return self.max_value(gamestate)
+        else:
+            return self.min_value(gamestate, agentID)
+        
+
+        
+    def min_value(self,gamestate: GameState, agentID):
+        minEval = 1000
+        for action in gamestate.getLegalActions(agentID):
+            successorState = gamestate.generateSuccessor(agentID, action)
+            minEval = min(minEval, self.value(successorState))
+        return minEval   
+
+    #for a max level, return max score
+    def max_value(self,gamestate: GameState):
+        maximumEval = -1000
+        for action in gamestate.getLegalActions(0):
+            successorState = gamestate.generateSuccessor(0, action)
+            maximumEval = max(maximumEval, self.value(successorState))
+        return maximumEval
+                
+
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
