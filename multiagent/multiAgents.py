@@ -259,7 +259,7 @@ def alphaBeta(self, gamestate, depth, alpha, beta, indexOfPlayer, bestAction):
                 bestAction = action
             maximumEval = max(maximumEval, evaluation)
             alpha = max(alpha, maximumEval)
-            if beta <= alpha:
+            if beta < alpha:
                 break
         return (maximumEval, bestAction)
     else: #minimzer case
@@ -271,7 +271,7 @@ def alphaBeta(self, gamestate, depth, alpha, beta, indexOfPlayer, bestAction):
                 bestAction = action
             minimumEval = min(minimumEval, evaluation)
             beta = min(minimumEval, beta)
-            if beta <= alpha:
+            if beta < alpha:
                 break
         return (minimumEval, bestAction)
 
