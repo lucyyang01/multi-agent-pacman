@@ -207,15 +207,15 @@ class MinimaxAgent(MultiAgentSearchAgent):
         #for i in range(1, self.depth):
         
         
-        return minimax(self, gameState, -1, 0, None)[1]
+        return minimax(self, gameState, 0, 0, None)[1]
         
 
 def minimax(self, gamestate, depth, indexOfPlayer, bestAction):
-    if (depth == self.depth and indexOfPlayer == gamestate.getNumAgents() - 1) or gamestate.isWin() or gamestate.isLose():
-        print("self.depth", self.depth)
-        print("target:" ,self.depth + 1)
-        print("actual:" ,depth)
-        print(gamestate.isWin(), gamestate.isLose())
+    if (depth == self.depth and indexOfPlayer == 0) or gamestate.isWin() or gamestate.isLose():
+        # print("self.depth", self.depth)
+        # print("target:" ,self.depth + 1)
+        # print("actual:" ,depth)
+        # print(gamestate.isWin(), gamestate.isLose())
         return (scoreEvaluationFunction(gamestate), bestAction)
     if indexOfPlayer == 0:
         maximumEval = -1000
