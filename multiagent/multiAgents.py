@@ -306,39 +306,33 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        return alfabeta(self, gameState, -1, -10000, 10000,  0, None)[1]
-    
-def alfabeta(self, gamestate, depth, indexOfPlayer, bestAction, alpha, beta):
-    if (depth == self.depth and indexOfPlayer == gamestate.getNumAgents() - 1) or gamestate.isWin() or gamestate.isLose():
-        # print("self.depth", self.depth)
-        # print("target:" ,self.depth + 1)
-        # print("actual:" ,depth)
-        # print(gamestate.isWin(), gamestate.isLose())
+        return alphaBeta(self, gameState, 0, -10000, 10000, 0, None)[1]
+
+def alphaBeta(self, gamestate, depth, alpha, beta, indexOfPlayer, bestAction):
+    if (depth == self.depth and indexOfPlayer == 0) or gamestate.isWin() or gamestate.isLose():
         return (scoreEvaluationFunction(gamestate), bestAction)
-    if indexOfPlayer == 0:
-        maximumEval = -1000
+    if indexOfPlayer == 0: #maximizer case
+        maximumEval = -10000
         for action in gamestate.getLegalActions(indexOfPlayer):
             successorState = gamestate.generateSuccessor(indexOfPlayer, action)
-            evaluation = minimax(self, successorState, depth + 1, alpha, beta, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
+            evaluation = alphaBeta(self, successorState, depth + 1, alpha, beta, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
             if maximumEval < evaluation:
                 bestAction = action
             maximumEval = max(maximumEval, evaluation)
-            alpha - max(alpha, maximumEval)
-            if beta <= alpha:
+            alpha = max(alpha, maximumEval)
+            if beta < alpha:
                 break
-            
         return (maximumEval, bestAction)
-    else:
-        minimumEval = 1000
+    else: #minimzer case
+        minimumEval = 10000
         for action in gamestate.getLegalActions(indexOfPlayer):
             successorState = gamestate.generateSuccessor(indexOfPlayer, action)
-            evaluation = minimax(self, successorState, depth, alpha, beta, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
-            
+            evaluation = alphaBeta(self, successorState, depth, alpha, beta, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
             if minimumEval < evaluation:
                 bestAction = action
             minimumEval = min(minimumEval, evaluation)
-            beta = min(beta, minimumEval)
-            if beta <= alpha:
+            beta = min(minimumEval, beta)
+            if beta < alpha:
                 break
         return (minimumEval, bestAction)
     
@@ -356,10 +350,10 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        return expectimax(self, gameState, -1,  0, None)[1]
+        return expectimax(self, gameState, 0,  0, None)[1]
 
 def expectimax(self, gamestate, depth, indexOfPlayer, bestAction):
-    if (depth == self.depth and indexOfPlayer == gamestate.getNumAgents() - 1) or gamestate.isWin() or gamestate.isLose():
+    if (depth == self.depth and indexOfPlayer == 0) or gamestate.isWin() or gamestate.isLose():
         # print("self.depth", self.depth)
         # print("target:" ,self.depth + 1)
         # print("actual:" ,depth)
@@ -379,7 +373,7 @@ def expectimax(self, gamestate, depth, indexOfPlayer, bestAction):
         expectedEval = 0
         for action in gamestate.getLegalActions(indexOfPlayer):
             successorState = gamestate.generateSuccessor(indexOfPlayer, action)
-            expectedEval += 1/(gamestate.getNumAgents() -1) *  expectimax(self, successorState, depth, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
+            expectedEval += 1/(gamestate.getNumAgents()) *  expectimax(self, successorState, depth, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
             # if minimumEval < evaluation:
             #     bestAction = action
             # minimumEval = min(minimumEval, evaluation)
