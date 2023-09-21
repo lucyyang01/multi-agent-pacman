@@ -373,11 +373,11 @@ def expectimax(self, gamestate, depth, indexOfPlayer, bestAction):
         expectedEval = 0
         for action in gamestate.getLegalActions(indexOfPlayer):
             successorState = gamestate.generateSuccessor(indexOfPlayer, action)
-            expectedEval += 1/(gamestate.getNumAgents()) *  expectimax(self, successorState, depth, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
-            # if minimumEval < evaluation:
-            #     bestAction = action
-            # minimumEval = min(minimumEval, evaluation)
-        return (expectedEval, bestAction)
+            # computes the average evaluation out of all outcomes for the successor states.
+            expectedEval += 1/(len(gamestate.getLegalActions(indexOfPlayer))) *  expectimax(self, successorState, depth, (indexOfPlayer +1) % gamestate.getNumAgents(), action)[0]
+            # in the spec, they say that the ghosts take random actions, this is why I thought we should return a random action instead of 'bestAction'.
+        
+        return (expectedEval, random.choice(gamestate.getLegalActions(indexOfPlayer)))
 
 def betterEvaluationFunction(currentGameState: GameState):
     """
