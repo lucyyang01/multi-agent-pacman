@@ -73,17 +73,15 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-        #return successorGameState.getScore()
-        "*** YOUR CODE HERE ***"
-        # print(newScaredTimes)
-        # return successorGameState.getScore()
-        #food, ghosts
-        
-        #get distance from each ghost
+        "*** YOUR CODE HERE ***" 
+
+        #coefficients
         score = 0
         foodCoefficient = 1
         scaredGhostCoefficient = 3
         normalGhostCoefficient = -3.2
+
+        #get distance from each ghost
         for newGhost in newGhostStates:
             ghostPosition = newGhost.getPosition()
             distanceToGhost = util.manhattanDistance(ghostPosition, newPos)
@@ -99,25 +97,17 @@ class ReflexAgent(Agent):
                     score -= 1000
                 else:
                     score += normalGhostCoefficient/distanceToGhost
-            
-        # if(currentGameState.getPacmanPosition() in newFood.asList()):
-        #     print("there is food in this spot")
-        #     score += 50
         for foodCordinates in newFood.asList():
             distanceToFood = util.manhattanDistance(newPos, foodCordinates)
             
             if distanceToFood == 1:
                 score += 0.7
             else:
-                #print("distance:", distanceToFood)
                 score += foodCoefficient/distanceToFood
-        #print(score)
-        #TODO: give a big boost if the num food is decreased after a move
+        #give a big boost if the num food is decreased after a move
         currentFood = currentGameState.getFood()
         if(len(currentFood.asList()) > len(newFood.asList())):
             score += 2 
-            #1/len  of newfood
-            #
         if((len(newGhostStates) > 0)): 
             if(len(newFood.asList()) > 1):
                 chaseFoodCoefficient = 4/(len(newFood.asList()) ** 2)
@@ -125,9 +115,7 @@ class ReflexAgent(Agent):
                 #we are at the last food
                 if len(newFood.asList()) == 0:
                     return 100000
-                
                 lastFoodItem = newFood.asList()[0]
-                #print(lastFoodItem)
                 ghostPosition = [ghosts.getPosition() for ghosts in newGhostStates]
                 currMin = 1000
                 minPosition = (1000, 1000)
@@ -135,7 +123,6 @@ class ReflexAgent(Agent):
                     if currMin > util.manhattanDistance(position, lastFoodItem):
                         minPosition = position
                     currMin = min(currMin, util.manhattanDistance(position, lastFoodItem))
-                    
                 if(util.manhattanDistance(lastFoodItem, currentGameState.getPacmanPosition()) < util.manhattanDistance(minPosition, lastFoodItem)):
                     chaseFoodCoefficient = 0
                 else:
@@ -325,9 +312,37 @@ def betterEvaluationFunction(currentGameState: GameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+    position = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    ghostStates = currentGameState.getGhostStates()
+    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
+    score = 0
+    foodCoefficient = 1
+    scaredGhostCoefficient = 2
+    normalGhostCoefficient = -3.2
+    #eval ghost states
+    for newGhost in ghostStates:
+        ghostPosition = newGhost.getPosition()
+        distanceToGhost = util.manhattanDistance(ghostPosition, position)
+        isScared = newGhost.scaredTimer != 0
+        #check if we have time to eat the ghost
+        if(isScared and util.manhattanDistance(ghostPosition, position) < newGhost.scaredTimer):
+            if distanceToGhost == 1 :
+                score += scaredGhostCoefficient
+            else:
+                score += scaredGhostCoefficient/(distanceToGhost)
+        else:
+            if distanceToGhost == 1 or distanceToGhost == 0:
+                score -= 1000
+            else:
+                score += normalGhostCoefficient/distanceToGhost
+    #eval food list
+    if len(food.asList()) == 0:
+            return 100000
+    #reward for shorter food list
+    score += 10/(len(food.asList()) ** 2) * 100
+    return score
 
-
-    util.raiseNotDefined()
 
 # Abbreviation
 better = betterEvaluationFunction
