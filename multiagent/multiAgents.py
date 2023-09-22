@@ -217,7 +217,7 @@ def minimax(self, gamestate, depth, indexOfPlayer, bestAction):
         # print("target:" ,self.depth + 1)
         # print("actual:" ,depth)
         # print(gamestate.isWin(), gamestate.isLose())
-        return (scoreEvaluationFunction(gamestate), bestAction)
+        return (self.evaluationFunction(gamestate), bestAction)
     if indexOfPlayer == 0:
         maximumEval = -1000
         for action in gamestate.getLegalActions(indexOfPlayer):
@@ -252,7 +252,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
 def alphaBeta(self, gamestate, depth, alpha, beta, indexOfPlayer, bestAction):
     if (depth == self.depth and indexOfPlayer == 0) or gamestate.isWin() or gamestate.isLose():
-        return (scoreEvaluationFunction(gamestate), bestAction)
+        return (self.evaluationFunction(gamestate), bestAction)
     if indexOfPlayer == 0: #maximizer case
         maximumEval = -10000
         for action in gamestate.getLegalActions(indexOfPlayer):
@@ -296,11 +296,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
 def expectimax(self, gamestate, depth, indexOfPlayer, bestAction):
     if (depth == self.depth and indexOfPlayer == 0) or gamestate.isWin() or gamestate.isLose():
-        # print("self.depth", self.depth)
-        # print("target:" ,self.depth + 1)
-        # print("actual:" ,depth)
-        # print(gamestate.isWin(), gamestate.isLose())
-        return (scoreEvaluationFunction(gamestate), bestAction)
+        return (self.evaluationFunction(gamestate), bestAction)
     if indexOfPlayer == 0:
         maximumEval = -1000
         for action in gamestate.getLegalActions(indexOfPlayer):
@@ -329,6 +325,7 @@ def betterEvaluationFunction(currentGameState: GameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+
 
     util.raiseNotDefined()
 
